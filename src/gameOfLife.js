@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 //import {  } from '../actions';
 
 
-class Cell extends Component {
+class GameOfLife extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      on: false,
+      rows: 20,
+      columns: 20,
     };
   }
   componentDidMount(){
@@ -37,4 +38,4 @@ function mapDispatchToProps (dispatch) {
 
 export default connect(mapStateToProps,
   mapDispatchToProps
-)(Cell)
+)(GameOfLife)
