@@ -25,6 +25,7 @@ h1 {
 }
 
 .item {
+  font-size: 12px;
   display: inline-block;
   border: 1px solid black;
   height: 30px;
