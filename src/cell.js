@@ -17,15 +17,17 @@ class Cell extends Component {
 // -1,-1 |0,-1 |+1,-1|-1,0 |+1,0|-1,+1| 0,+1 | +1,+1
 
   clickTest = ()=>{
-    this.props.toggle(this.props.id, !this.props.alive)
+    const {game, toggle, id, alive} = this.props;
+    if (!game.started) toggle(id, !alive)
   }
 
   render(){
+    const {alive } = this.props;
   	return (
       <div 
-      className={`item ${this.props.alive ? 'item--alive' : ''}`}
+      className={`item ${alive ? 'item--alive' : ''}`}
       onClick={this.clickTest}
-      >
+      >{this.props.id}
       </div>
   	)
   }

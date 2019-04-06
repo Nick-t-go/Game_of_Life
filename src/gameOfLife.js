@@ -18,12 +18,12 @@ import {
 // Any dead cell with 
 //    exactly three live neighbours becomes a live cell, as if by reproduction.
 
-class GameOfLife extends Component {
+export class GameOfLife extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rows:  20,
-      columns: 20,
+      rows:  15,
+      columns: 15,
     };
   }
 
@@ -68,18 +68,20 @@ class GameOfLife extends Component {
   }
 
   createTable = () => {
-    const { cells, game } = this.props
+    const { cells, game } = this.props;
+    const { rows, columns } = this.state;
     let table = []
     // Outer loop to create parent
-    for (let y = 0; y <= this.state.rows; y++) {
+    for (let y = 0; y <= rows; y++) {
       let children = []
       //Inner loop to create children
-      for (let x = 0; x <= this.state.columns; x++) {
+      for (let x = 0; x <= columns; x++) {
         let key = x+'-'+y;
         children.push(
           <Cell 
           x={x}
           y={y}
+          total={rows * columns}
           id={key}
           key={key} 
           alive={game.sequences[game.current][key]}
@@ -130,7 +132,10 @@ class GameOfLife extends Component {
     const sequnece = game.sequences[game.current]
     let neighbors = cells.grid[id].neighbors
     let aliveNeighbors = neighbors.filter( neighborID => sequnece[neighborID])
-    if(!alive && aliveNeighbors.length === 3) return true;
+    if(!alive){
+      if(aliveNeighbors.length === 3) return true;
+      return false
+    } 
     if (aliveNeighbors.length <= 1){
       return false;
     }else if(aliveNeighbors.length <= 3){
@@ -162,7 +167,7 @@ class GameOfLife extends Component {
   render(){
     const { game } = this.props
   	return (
-      <div>
+      <div data-test="component-game">
         {game.sequences[0] && this.createTable()}
         <div className="control">
           { game.started ?
