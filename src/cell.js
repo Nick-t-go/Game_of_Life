@@ -26,7 +26,6 @@ class Cell extends Component {
       className={`item ${this.props.alive ? 'item--alive' : ''}`}
       onClick={this.clickTest}
       >
-      {`${this.props.x},${this.props.y}`}
       </div>
   	)
   }

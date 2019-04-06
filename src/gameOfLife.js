@@ -22,8 +22,8 @@ class GameOfLife extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rows: 10,
-      columns: 10,
+      rows:  20,
+      columns: 20,
     };
   }
 
@@ -151,6 +151,14 @@ class GameOfLife extends Component {
     clearInterval(this.stepper);
   }
 
+  decrement = () => {
+    this.props.changeSequence(this.props.game.current-1)
+  }
+
+  increment = () => {
+    this.props.changeSequence(this.props.game.current+1)
+  }
+
   render(){
     const { game } = this.props
   	return (
@@ -177,6 +185,18 @@ class GameOfLife extends Component {
           <div
           className="controls"
           >{`Sequence: ${this.props.game.current}`}</div>
+          { game.current > 0 &&
+           <button
+            onClick={this.decrement}
+            className="controls"
+            >Step Back
+            </button> }
+          { game.sequences.length > game.current+1 &&
+           <button
+            onClick={this.increment}
+            className="controls"
+            >Step Forward
+            </button> }
         </div>
       </div>
   	)
