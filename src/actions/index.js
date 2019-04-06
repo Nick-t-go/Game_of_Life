@@ -6,6 +6,10 @@ export const actionTypes = {
 	INITIALIZE_SEQUENCE: 'INITIALIZE_SEQUENCE',
 	TOGGLE_CELL: 'TOGGLE_CELL',
 	ADD_SEQUENCE: 'ADD_SEQUENCE',
+	RESET_GAME: 'RESET_GAME',
+	SET_GAME_START: 'SET_GAME_START',
+	TOGGLE_PAUSE: 'TOGGLE_PAUSE',
+
 };
 
 export const initializeGrid = (grid) => ({
@@ -33,4 +37,21 @@ export const changeCurrentSequence = (value) => ({
 	value,
 	type: actionTypes.CHANGE_SEQUENCE,
 });
+
+export const resetGameGrid = () => ({
+	type: actionTypes.RESET_GAME
+})
+
+
+export const setStartGame = () => ({
+	type: actionTypes.SET_GAME_START
+})
+
+
+export const toggleGamePause = (value) => ({
+	value,
+	type: actionTypes.TOGGLE_PAUSE
+})
+
+
 

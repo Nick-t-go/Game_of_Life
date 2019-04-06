@@ -6,6 +6,9 @@ import {
   initializeSequence,
   addNextSequence,
   changeCurrentSequence,
+  toggleGamePause,
+  setStartGame,
+  resetGameGrid
 } from './actions/'
 
 // Any live cell with 
@@ -14,9 +17,6 @@ import {
 //    more than three live neighbours dies, as if by overpopulation.
 // Any dead cell with 
 //    exactly three live neighbours becomes a live cell, as if by reproduction.
-
-
-
 
 class GameOfLife extends Component {
   constructor(props) {
@@ -29,6 +29,7 @@ class GameOfLife extends Component {
 
   componentDidMount(){
     this.initialize()
+    this.stepper;
     //registerGrid(this.state.columns, this.state.rows)
   }
 
@@ -92,11 +93,28 @@ class GameOfLife extends Component {
   }
 
   start = () => {
+    this.props.startGame();
+    this.tick();
+    this.setStepper()
+  }
+
+  tick = () => {
     const { game, cells } = this.props;
     const { sequences, current } = game;
-    let nextSequence = this.getNextSequence(sequences[current])
-    this.props.addSequence(nextSequence)
-    this.props.changeSequence(game.current+1)
+    let nextIdx = game.current+1
+    if(!sequences[nextIdx]){
+      let nextSequence = this.getNextSequence(sequences[current])
+      this.props.addSequence(nextSequence)
+    }
+    this.props.changeSequence(nextIdx)
+  }
+
+  setStepper = () => {
+    this.stepper = window.setInterval( () => {
+      if(!this.props.game.pause){
+        this.tick()
+      }
+    },500)  
   }
 
 
@@ -123,28 +141,34 @@ class GameOfLife extends Component {
   } 
 
   pause = () => {
-    console.log('pause')
+    const pause = !this.props.game.pause
+    this.props.togglePause(pause)
   }
 
   reset = () => {
-    console.log('reset')
+    this.initialize();
+    this.props.resetGame();
+    clearInterval(this.stepper);
   }
 
   render(){
+    const { game } = this.props
   	return (
       <div>
-        {this.props.game.sequences[0] && this.createTable()}
+        {game.sequences[0] && this.createTable()}
         <div className="control">
-          <button
-          onClick={this.start}
-          className="controls"
-          >Start
-          </button>
-          <button
-          onClick={this.pause}
-          className="controls"
-          >Pause
-          </button>
+          { game.started ?
+            <button
+            onClick={this.pause}
+            className="controls"
+            >{game.pause ? 'Resume' : 'Pause'}
+            </button> :
+            <button
+            onClick={this.start}
+            className="controls"
+            >Start
+            </button> 
+          }
           <button
           onClick={this.reset}
           className="controls"
@@ -173,6 +197,9 @@ function mapDispatchToProps (dispatch) {
     initSequence: (seq) => dispatch(initializeSequence(seq)),
     addSequence: (seq) => dispatch(addNextSequence(seq)),
     changeSequence: (val) => dispatch(changeCurrentSequence(val)),
+    togglePause: (val) => dispatch(toggleGamePause(val)),
+    startGame: () => dispatch(setStartGame()),
+    resetGame: () => dispatch(resetGameGrid()),
   }
 }
     
