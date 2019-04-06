@@ -35,3 +35,15 @@ h1 {
 .item--alive {
   background-color: black;
 }
+.control {
+  margin-top: 10px;
+  width: 100%;
+  display:flex;
+  justify-content: center;
+}
+
+.controls {
+  margin: 0 10px;
+}
+
+

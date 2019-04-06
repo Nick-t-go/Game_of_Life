@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import cell from './cellReducer';
+import cells from './cellReducer';
 import game from './gameReducer';
 
 
 export default combineReducers({
-	cell,
+	cells,
 	game
 })

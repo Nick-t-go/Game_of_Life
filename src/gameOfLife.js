@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cell from './cell';
-//import {  } from '../actions';
-
+import { 
+  initializeGrid,
+  initializeSequence,
+  addNextSequence,
+  changeCurrentSequence,
+} from './actions/'
 
 // Any live cell with 
 //    fewer than two live neighbours dies, as if by underpopulation.
@@ -41,33 +45,45 @@ class GameOfLife extends Component {
   }
 
   initialize = () => {
-    
-
+    const { cells, sequence } = this.createCells();
+    let initialCellsGrid = {set:true, grid: cells}
+    this.props.initSequence(sequence);
+    this.props.initGrid(initialCellsGrid);
   }
 
   createCells = () => {
-    let cells = {};
+    let cells = {}
+    let sequence = {}
     for (let y = 0; y <= this.state.rows; y++) {
       for (let x = 0; x <= this.state.columns; x++) {
-        cells[x+'-'+y] = {
+        let key = x+'-'+y
+        cells[key] = {
           neighbors: this.collectNeighbors(x,y),
-          alive: false,
-        }
+        };
+        sequence[key] = false
       }
     }
-    return cells
+    return {cells, sequence}
   }
 
   createTable = () => {
+    const { cells, game } = this.props
     let table = []
-
     // Outer loop to create parent
     for (let y = 0; y <= this.state.rows; y++) {
       let children = []
       //Inner loop to create children
       for (let x = 0; x <= this.state.columns; x++) {
         let key = x+'-'+y;
-        children.push(<Cell x={x} y={y} coord={key} key={key}/>)
+        children.push(
+          <Cell 
+          x={x}
+          y={y}
+          id={key}
+          key={key} 
+          alive={game.sequences[game.current][key]}
+          />
+        )
       }
       //Create the parent and add the children
       table.push(<div className="row" key={y}>{children}</div>)
@@ -75,29 +91,91 @@ class GameOfLife extends Component {
     return table
   }
 
+  start = () => {
+    const { game, cells } = this.props;
+    const { sequences, current } = game;
+    let nextSequence = this.getNextSequence(sequences[current])
+    this.props.addSequence(nextSequence)
+    this.props.changeSequence(game.current+1)
+  }
+
+
+  getNextSequence(currentSequence){
+    return Object.entries(currentSequence).reduce( (acc,[id, value])=>{
+      acc[id] = this.getNextState(id, value)
+      return acc
+    }, {})
+  }
+
+  getNextState = (id, alive) => {
+    const {game, cells} = this.props
+    const sequnece = game.sequences[game.current]
+    let neighbors = cells.grid[id].neighbors
+    let aliveNeighbors = neighbors.filter( neighborID => sequnece[neighborID])
+    if(!alive && aliveNeighbors.length === 3) return true;
+    if (aliveNeighbors.length <= 1){
+      return false;
+    }else if(aliveNeighbors.length <= 3){
+      return true;
+    }else{
+      return false;
+    }
+  } 
+
+  pause = () => {
+    console.log('pause')
+  }
+
+  reset = () => {
+    console.log('reset')
+  }
+
   render(){
   	return (
       <div>
-        {this.createTable()}
+        {this.props.game.sequences[0] && this.createTable()}
+        <div className="control">
+          <button
+          onClick={this.start}
+          className="controls"
+          >Start
+          </button>
+          <button
+          onClick={this.pause}
+          className="controls"
+          >Pause
+          </button>
+          <button
+          onClick={this.reset}
+          className="controls"
+          >Reset
+          </button>
+          <div
+          className="controls"
+          >{`Sequence: ${this.props.game.current}`}</div>
+        </div>
       </div>
   	)
   }
 }
 
 
-function mapStateToProps ({ cell, game }) {
+function mapStateToProps ({ cells, game }) {
   return {
-    cell,
+    cells,
     game,
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    
+    initGrid: (grid) => dispatch(initializeGrid(grid)),
+    initSequence: (seq) => dispatch(initializeSequence(seq)),
+    addSequence: (seq) => dispatch(addNextSequence(seq)),
+    changeSequence: (val) => dispatch(changeCurrentSequence(val)),
   }
 }
-
+    
 export default connect(mapStateToProps,
   mapDispatchToProps
 )(GameOfLife)

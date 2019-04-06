@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { toggleCell } from './actions/';
 //import {  } from '../actions';
 
 
 class Cell extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      neighbors: [],
-    };
   }
   componentDidMount(){
     
@@ -19,13 +17,13 @@ class Cell extends Component {
 // -1,-1 |0,-1 |+1,-1|-1,0 |+1,0|-1,+1| 0,+1 | +1,+1
 
   clickTest = ()=>{
-    console.log(this.state.neighbors)
+    this.props.toggle(this.props.id, !this.props.alive)
   }
 
   render(){
   	return (
       <div 
-      className={`item ${this.state.alive ? 'item--alive' : ''}`}
+      className={`item ${this.props.alive ? 'item--alive' : ''}`}
       onClick={this.clickTest}
       >
       {`${this.props.x},${this.props.y}`}
@@ -44,7 +42,7 @@ function mapStateToProps ({ cell, game }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    
+    toggle: (id, value)=> dispatch(toggleCell(id, value)),
   }
 }
 
