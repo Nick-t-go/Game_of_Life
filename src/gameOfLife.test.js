@@ -36,9 +36,14 @@ describe('check component instance methods', () => {
       const correctNeighbors = ['4-4', '5-4', '6-4', '4-5', '6-5', '4-6', '5-6', '6-6'].sort().join();
       expect(neighbors.sort().join()).toBe(correctNeighbors);
     });
-    test('returns correct neighbors for wrap mode', () => {
+    test('returns correct neighbors for wrap mode at top left', () => {
     	const neighbors = game.collectNeighbors(0, 0, true);
         const correctNeighbors = ['4-4', '0-4', '1-4', '4-0', '1-0', '4-1', '0-1', '1-1'].sort().join();
+        expect(neighbors.sort().join()).toBe(correctNeighbors);
+    });
+    test('returns correct neighbors for wrap mode at bottom right', () => {
+    	const neighbors = game.collectNeighbors(4, 4, true);
+        const correctNeighbors = ['0-0', '0-3', '0-4', '3-0', '3-3', '3-4', '4-0', '4-3'].sort().join();
         expect(neighbors.sort().join()).toBe(correctNeighbors);
     });
   });
