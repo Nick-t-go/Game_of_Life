@@ -33,30 +33,48 @@ export class GameOfLife extends Component {
     //registerGrid(this.state.columns, this.state.rows)
   }
 
-  collectNeighbors = (x, y) => {
+  collectNeighbors = (x, y, wrap) => {
+    const {columns, rows } = this.state;
     let neighbors = [];
     for (let i = x-1; i <= x+1; i++){
       for(let j = y-1; j <= y+1; j++){
         if( i !== x || j !== y){
-          neighbors.push(i+'-'+j)
+          if(wrap){
+             let checkedX = this.wrapCheck(i, columns)
+             let checkedY = this.wrapCheck(j, rows)
+             neighbors.push(checkedX+'-'+checkedY)
+          }else{
+            neighbors.push(i+'-'+j)
+          }
         }
       }
     }
     return neighbors
   }
 
+  wrapCheck = (val, limit) => {
+    if(val === -1){
+      return limit -1
+    } else if(val === limit){
+      return 0
+    } else{
+      return val
+    }
+  }
+
   initialize = () => {
+    const {rows, columns } = this.state;
     const { cells, sequence } = this.createCells();
     let initialCellsGrid = {set:true, grid: cells}
     this.props.initSequence(sequence);
     this.props.initGrid(initialCellsGrid);
   }
 
-  createCells = () => {
+  createCells = (rows, columns) => {
     let cells = {}
     let sequence = {}
-    for (let y = 0; y <= this.state.rows; y++) {
-      for (let x = 0; x <= this.state.columns; x++) {
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < columns; x++) {
         let key = x+'-'+y
         cells[key] = {
           neighbors: this.collectNeighbors(x,y),
@@ -72,10 +90,10 @@ export class GameOfLife extends Component {
     const { rows, columns } = this.state;
     let table = []
     // Outer loop to create parent
-    for (let y = 0; y <= rows; y++) {
+    for (let y = 0; y < rows; y++) {
       let children = []
       //Inner loop to create children
-      for (let x = 0; x <= columns; x++) {
+      for (let x = 0; x < columns; x++) {
         let key = x+'-'+y;
         children.push(
           <Cell 

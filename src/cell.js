@@ -17,8 +17,8 @@ class Cell extends Component {
 // -1,-1 |0,-1 |+1,-1|-1,0 |+1,0|-1,+1| 0,+1 | +1,+1
 
   clickTest = ()=>{
-    const {game, toggle, id, alive} = this.props;
-    if (!game.started) toggle(id, !alive)
+    const {toggle, id, alive} = this.props;
+    toggle(id, !alive)
   }
 
   render(){

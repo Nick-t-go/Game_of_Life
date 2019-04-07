@@ -9,7 +9,7 @@ export default (state={active:false, current:0, sequences: [], started: false, p
 				draft.sequences = [action.sequence];
 				return
 			case actionTypes.TOGGLE_CELL:
-				draft.sequences[0][action.cell] = action.value;
+				draft.sequences[draft.current][action.cell] = action.value;
 				return
 			case actionTypes.ADD_SEQUENCE:
 				draft.sequences.push(action.sequence)
