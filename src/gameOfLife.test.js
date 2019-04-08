@@ -16,21 +16,22 @@ const findByTestAttr = (wrapper, val) => {
 	return wrapper.find(`[data-test="${val}"]`)
 }
 
-const setup = (props={}, state={columns:5, rows: 5}) => {
+const setup = (state={columns:5, rows: 5}) => {
+	console.log(state)
 	const store = storeFactory({})
-	let shallowWrap = shallow(<GameOfLife {...props} store={store}/>).dive()
+	let shallowWrap = shallow(<GameOfLife  store={store}/>).dive()
 	shallowWrap.setState(state);
 	return shallowWrap;
 }
 
 describe('check component instance methods', () => {
-  let wrapper;
-  let game;
-  beforeEach(() => {
-    wrapper = setup();
-    game = wrapper.instance();
-  });
   describe('collectNeighbors', () => {
+  	 let wrapper;
+  	 let game;
+  	 beforeEach(() => {
+  	   wrapper = setup();
+  	   game = wrapper.instance();
+  	 });
     test('returns correct neighbors for no-wrap mode', () => {
       const neighbors = game.collectNeighbors(5,5);
       const correctNeighbors = ['4-4', '5-4', '6-4', '4-5', '6-5', '4-6', '5-6', '6-6'].sort().join();
@@ -49,7 +50,9 @@ describe('check component instance methods', () => {
   });
   describe('createCells', () => {
   	test('returns correct sequence', () => {
-  		const { sequence } = game.createCells(2,2);
+  		const wrapper = setup({columns:2,rows:2});
+  	    const game = wrapper.instance();
+  		const { sequence } = game.createCells();
   		const correctSequence = {
   		  '0-0': false,
   		  '0-1': false,
@@ -59,7 +62,9 @@ describe('check component instance methods', () => {
   		expect(sequence).toEqual(correctSequence)
   	});
   	test('returns correct number of cells', () => {
-  		const { cells } = game.createCells(10, 10);
+  		const wrapper = setup({columns:10, rows:10});
+  	    const game = wrapper.instance();
+  		const { cells } = game.createCells();
   		expect(Object.keys(cells).length).toBe(100)
   	});
   });

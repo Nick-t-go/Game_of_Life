@@ -27,6 +27,8 @@ export default (state={active:false, current:0, sequences: [], started: false, p
 				draft.started = false;
 				return
 			case actionTypes.TOGGLE_WRAP:
+				draft.wrap = action.value;
+				return
 			default:
 				return state;
 		}

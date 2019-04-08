@@ -64,21 +64,22 @@ export class GameOfLife extends Component {
   }
 
   initialize = () => {
-    const {rows, columns } = this.state;
-    const { cells, sequence } = this.createCells(rows, columns);
+    const { cells, sequence } = this.createCells();
     let initialCellsGrid = {set:true, grid: cells}
     this.props.initSequence(sequence);
     this.props.initGrid(initialCellsGrid);
   }
 
-  createCells = (rows, columns) => {
+  createCells = () => {
+    const {rows, columns } = this.state;
+    const { wrap } = this.props.game
     let cells = {}
     let sequence = {}
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < columns; x++) {
         let key = x+'-'+y
         cells[key] = {
-          neighbors: this.collectNeighbors(x,y),
+          neighbors: this.collectNeighbors(x,y, wrap),
         };
         sequence[key] = false
       }
@@ -184,6 +185,11 @@ export class GameOfLife extends Component {
     this.props.changeSequence(this.props.game.current+1)
   }
 
+  wrapToggle = (event) => {
+    this.props.toggleWrap(event.target.checked)
+    this.createCells();
+  }
+
   render(){
     const { game } = this.props
   	return (
@@ -209,6 +215,8 @@ export class GameOfLife extends Component {
             <input 
             type="checkbox"
             disabled={game.started}
+            
+            onChange={this.wrapToggle}
             />
             <span
             className="slider round"
@@ -259,7 +267,7 @@ function mapDispatchToProps (dispatch) {
     togglePause: (val) => dispatch(toggleGamePause(val)),
     startGame: () => dispatch(setStartGame()),
     resetGame: () => dispatch(resetGameGrid()),
-    toggleWrap: () => dispatch(toggleGameWrap()),
+    toggleWrap: (val) => dispatch(toggleGameWrap(val)),
   }
 }
     
