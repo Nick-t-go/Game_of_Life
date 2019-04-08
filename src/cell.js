@@ -16,7 +16,6 @@ class Cell extends Component {
       alive
     } = this.props;
     e.persist();
-    console.log(e.buttons, e.type)
     if (e.buttons == 1 || e.buttons == 3 || e.type === 'click') {
       toggle(id, !alive);
     }
