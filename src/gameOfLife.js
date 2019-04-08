@@ -35,22 +35,25 @@ export class GameOfLife extends Component {
   }
 
   collectNeighbors = (x, y, wrap) => {
-    const {columns, rows } = this.state;
+    const {
+      columns,
+      rows
+    } = this.state;
     let neighbors = [];
-    for (let i = x-1; i <= x+1; i++){
-      for(let j = y-1; j <= y+1; j++){
-        if( i !== x || j !== y){
-          if(wrap){
-             let checkedX = this.wrapCheck(i, columns)
-             let checkedY = this.wrapCheck(j, rows)
-             neighbors.push(checkedX+'-'+checkedY)
-          }else{
-            neighbors.push(i+'-'+j)
+    for (let i = x - 1; i <= x + 1; i++) {
+      for (let j = y - 1; j <= y + 1; j++) {
+        if (i !== x || j !== y) {
+          if (wrap) {
+            let checkedX = this.wrapCheck(i, columns);
+            let checkedY = this.wrapCheck(j, rows);
+            neighbors.push(checkedX + '-' + checkedY);
+          } else {
+            neighbors.push(i + '-' + j);
           }
         }
       }
     }
-    return neighbors
+    return neighbors;
   }
 
   wrapCheck = (val, limit) => {
@@ -72,7 +75,6 @@ export class GameOfLife extends Component {
 
   createCells = (wrap=false) => {
     const {rows, columns } = this.state;
-    console.log(wrap)
     let cells = {}
     let sequence = {}
     for (let y = 0; y < rows; y++) {
@@ -88,16 +90,22 @@ export class GameOfLife extends Component {
   }
 
   createTable = () => {
-    const { cells, game } = this.props;
-    const { rows, columns } = this.state;
-    let table = []
-    // Outer loop to create parent
-    for (let y = 0; y < rows; y++) {
-      let children = []
-      //Inner loop to create children
-      for (let x = 0; x < columns; x++) {
-        let key = x+'-'+y;
-        children.push(
+      const {
+        cells,
+        game
+      } = this.props;
+      const {
+        rows,
+        columns
+      } = this.state;
+      let table = []
+      // Outer loop to create parent
+      for (let y = 0; y < rows; y++) {
+        let children = []
+        //Inner loop to create children
+        for (let x = 0; x < columns; x++) {
+          let key = x + '-' + y;
+          children.push(
           <Cell 
           x={x}
           y={y}
@@ -117,54 +125,63 @@ export class GameOfLife extends Component {
   start = () => {
     this.props.startGame();
     this.tick();
-    this.setStepper()
+    this.setStepper();
   }
 
   tick = () => {
-    const { game, cells } = this.props;
-    const { sequences, current } = game;
-    let nextIdx = game.current+1
-    if(!sequences[nextIdx]){
-      let nextSequence = this.getNextSequence(sequences[current])
-      this.props.addSequence(nextSequence)
+    const {
+      game,
+      cells,
+    } = this.props;
+    const {
+      sequences,
+      current,
+    } = game;
+    let nextIdx = game.current + 1;
+    if (!game.started) this.props.startGame();
+    if (!sequences[nextIdx]) {
+      let nextSequence = this.getNextSequence(sequences[current]);
+      this.props.addSequence(nextSequence);
     }
-    this.props.changeSequence(nextIdx)
+    this.props.changeSequence(nextIdx);
   }
 
   setStepper = () => {
-    this.stepper = window.setInterval( () => {
-      if(!this.props.game.pause){
-        this.tick()
+    this.stepper = window.setInterval(() => {
+      if (!this.props.game.pause) {
+        this.tick();
       }
-    },500)  
+    }, 500)
   }
 
 
-  getNextSequence(currentSequence){
-    return Object.entries(currentSequence).reduce( (acc,[id, value])=>{
-      acc[id] = this.getNextState(id, value)
-      return acc
+  getNextSequence(currentSequence) {
+    return Object.entries(currentSequence).reduce((acc, [id, value]) => {
+      acc[id] = this.getNextState(id, value);
+      return acc;
     }, {})
   }
 
   getNextState = (id, alive) => {
-    const {game, cells} = this.props
-    const sequnece = game.sequences[game.current]
-    console.log(id, alive, cells)
-    let neighbors = cells.grid[id].neighbors
-    let aliveNeighbors = neighbors.filter( neighborID => sequnece[neighborID])
-    if(!alive){
-      if(aliveNeighbors.length === 3) return true;
+    const {
+      game,
+      cells
+    } = this.props
+    const sequnece = game.sequences[game.current];
+    let neighbors = cells.grid[id].neighbors;
+    let aliveNeighbors = neighbors.filter(neighborID => sequnece[neighborID])
+    if (!alive) {
+      if (aliveNeighbors.length === 3) return true;
       return false
-    } 
-    if (aliveNeighbors.length <= 1){
+    }
+    if (aliveNeighbors.length <= 1) {
       return false;
-    }else if(aliveNeighbors.length <= 3){
+    } else if (aliveNeighbors.length <= 3) {
       return true;
-    }else{
+    } else {
       return false;
     }
-  } 
+  }
 
   pause = () => {
     const pause = !this.props.game.pause
@@ -178,17 +195,22 @@ export class GameOfLife extends Component {
   }
 
   decrement = () => {
-    this.props.changeSequence(this.props.game.current-1)
+    this.props.changeSequence(this.props.game.current - 1)
   }
 
   increment = () => {
-    this.props.changeSequence(this.props.game.current+1)
+    this.props.changeSequence(this.props.game.current + 1)
   }
 
   wrapToggle = (event) => {
     this.props.toggleWrap(event.target.checked)
-    const { cells } = this.createCells(event.target.checked);
-    let cellsGrid = {set:true, grid: cells}
+    const {
+      cells
+    } = this.createCells(event.target.checked);
+    let cellsGrid = {
+      set: true,
+      grid: cells
+    }
     this.props.initGrid(cellsGrid);
   }
 
@@ -199,13 +221,18 @@ export class GameOfLife extends Component {
         {game.sequences[0] && this.createTable()}
         <div className="control">
           <button
+          onClick={this.tick}
+          className="controls"
+          >Tick
+          </button> 
+          <button
           onClick={this.start}
           className="controls"
-          disabled={game.started}
+          disabled={game.started && this.stepper}
           >Start
           </button> 
           <button
-          disabled={!game.started}
+          disabled={!game.started || !this.stepper}
           onClick={this.pause}
           className="controls"
           >{game.pause ? 'Resume' : 'Pause'}
