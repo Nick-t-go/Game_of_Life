@@ -210,21 +210,22 @@ export class GameOfLife extends Component {
           className="controls"
           >{game.pause ? 'Resume' : 'Pause'}
           </button> 
-          <small>Wrap</small>
-          <label 
-          className="switch"
-          > 
-          <input 
-          type="checkbox"
-          disabled={game.started}
-          checked={game.wrap}
-          onChange={this.wrapToggle}
-          />
-          <span
-          className="slider round"
-          ></span>
-          </label>
-
+          <div>
+            Wrap
+            <label 
+            className="switch"
+            > 
+            <input 
+            type="checkbox"
+            disabled={game.started}
+            checked={game.wrap}
+            onChange={this.wrapToggle}
+            />
+            <span
+            className="slider round"
+            ></span>
+            </label>
+          </div>
           <button
           onClick={this.reset}
           className="controls"
@@ -233,18 +234,18 @@ export class GameOfLife extends Component {
           <div
           className="controls"
           >{`Sequence: ${this.props.game.current}`}</div>
-          { game.current > 0 &&
            <button
             onClick={this.decrement}
             className="controls"
+            disabled={!game.started || game.current === 0}
             >Step Back
-            </button> }
-          { game.sequences.length > game.current+1 &&
+            </button> 
            <button
             onClick={this.increment}
             className="controls"
+            disabled={!game.started || game.sequences.length === game.current+1}
             >Step Forward
-            </button> }
+            </button> 
 
         </div>
       </div>
