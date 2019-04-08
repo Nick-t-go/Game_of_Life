@@ -1,7 +1,7 @@
 import { actionTypes } from '../actions';
 import produce from "immer";
 
-export default (state={active:false, current:0, sequences: [], started: false, pause: false}, action ) => 
+export default (state={active:false, current:0, sequences: [], started: false, pause: false, wrap: false}, action ) => 
 	produce(state, draft => {
 		switch(action.type){
 			case actionTypes.INITIALIZE_SEQUENCE: 
@@ -26,6 +26,7 @@ export default (state={active:false, current:0, sequences: [], started: false, p
 			case actionTypes.RESET_GAME:
 				draft.started = false;
 				return
+			case actionTypes.TOGGLE_WRAP:
 			default:
 				return state;
 		}

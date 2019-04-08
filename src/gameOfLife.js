@@ -8,7 +8,8 @@ import {
   changeCurrentSequence,
   toggleGamePause,
   setStartGame,
-  resetGameGrid
+  resetGameGrid,
+  toggleGameWrap,
 } from './actions/'
 
 // Any live cell with 
@@ -64,7 +65,7 @@ export class GameOfLife extends Component {
 
   initialize = () => {
     const {rows, columns } = this.state;
-    const { cells, sequence } = this.createCells();
+    const { cells, sequence } = this.createCells(rows, columns);
     let initialCellsGrid = {set:true, grid: cells}
     this.props.initSequence(sequence);
     this.props.initGrid(initialCellsGrid);
@@ -148,6 +149,7 @@ export class GameOfLife extends Component {
   getNextState = (id, alive) => {
     const {game, cells} = this.props
     const sequnece = game.sequences[game.current]
+    console.log(id, alive, cells)
     let neighbors = cells.grid[id].neighbors
     let aliveNeighbors = neighbors.filter( neighborID => sequnece[neighborID])
     if(!alive){
@@ -200,6 +202,19 @@ export class GameOfLife extends Component {
             >Start
             </button> 
           }
+          <small>Wrap</small>
+          <label 
+          className="switch"
+          > 
+            <input 
+            type="checkbox"
+            disabled={game.started}
+            />
+            <span
+            className="slider round"
+            ></span>
+          </label>
+
           <button
           onClick={this.reset}
           className="controls"
@@ -220,6 +235,7 @@ export class GameOfLife extends Component {
             className="controls"
             >Step Forward
             </button> }
+
         </div>
       </div>
   	)
@@ -243,6 +259,7 @@ function mapDispatchToProps (dispatch) {
     togglePause: (val) => dispatch(toggleGamePause(val)),
     startGame: () => dispatch(setStartGame()),
     resetGame: () => dispatch(resetGameGrid()),
+    toggleWrap: () => dispatch(toggleGameWrap()),
   }
 }
     

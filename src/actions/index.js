@@ -9,6 +9,7 @@ export const actionTypes = {
 	RESET_GAME: 'RESET_GAME',
 	SET_GAME_START: 'SET_GAME_START',
 	TOGGLE_PAUSE: 'TOGGLE_PAUSE',
+	TOGGLE_WRAP: 'TOGGLE_WRAP',
 
 };
 
@@ -51,6 +52,11 @@ export const setStartGame = () => ({
 export const toggleGamePause = (value) => ({
 	value,
 	type: actionTypes.TOGGLE_PAUSE
+})
+
+export const toggleGameWrap = (value) => ({
+	value,
+	type: actionTypes.TOGGLE_WRAP
 })
 
 
