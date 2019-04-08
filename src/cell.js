@@ -8,16 +8,13 @@ class Cell extends Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount(){
-    
-  }
 
-  // If I am 5,5 I need to gather
-// 4,4   |5,4  |6,4  |4,5  |6,5 | 4,6 | 5,6  | 6,6
-// -1,-1 |0,-1 |+1,-1|-1,0 |+1,0|-1,+1| 0,+1 | +1,+1
-
-  clickTest = ()=>{
-    const {toggle, id, alive} = this.props;
+  clickTest = () => {
+    const {
+      toggle,
+      id,
+      alive
+    } = this.props;
     toggle(id, !alive)
   }
 

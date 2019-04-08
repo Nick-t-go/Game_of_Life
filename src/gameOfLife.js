@@ -10,7 +10,7 @@ import {
   setStartGame,
   resetGameGrid,
   toggleGameWrap,
-} from './actions/'
+} from './actions/';
 
 // Any live cell with 
 //    fewer than two live neighbours dies, as if by underpopulation.
@@ -29,7 +29,7 @@ export class GameOfLife extends Component {
   }
 
   componentDidMount(){
-    this.initialize()
+    this.initialize();
     this.stepper;
     //registerGrid(this.state.columns, this.state.rows)
   }
@@ -57,9 +57,9 @@ export class GameOfLife extends Component {
   }
 
   wrapCheck = (val, limit) => {
-    if(val === -1){
+    if(val === -1) {
       return limit -1
-    } else if(val === limit){
+    } else if(val === limit) {
       return 0
     } else{
       return val

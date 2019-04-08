@@ -8,8 +8,8 @@ import { middlewares } from '../src/configureStore';
 import GameOfLife from './gameOfLife';
 
 const storeFactory = (initialState) => {
-	const createStoreWithMiddleware = applyMiddleware(middlewares[0])(createStore)
-	return createStoreWithMiddleware(rootReducer, initialState)
+	const createStoreWithMiddleware = applyMiddleware(middlewares[0])(createStore);
+	return createStoreWithMiddleware(rootReducer, initialState);
 }
 
 const findByTestAttr = (wrapper, val) => {
@@ -17,8 +17,8 @@ const findByTestAttr = (wrapper, val) => {
 }
 
 const setup = (state={columns:5, rows: 5}) => {
-	const store = storeFactory({})
-	let shallowWrap = shallow(<GameOfLife  store={store}/>).dive()
+	const store = storeFactory({});
+	let shallowWrap = shallow(<GameOfLife store={store}/>).dive()
 	shallowWrap.setState(state);
 	return shallowWrap;
 }
