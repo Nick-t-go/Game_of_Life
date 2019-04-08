@@ -9,13 +9,17 @@ class Cell extends Component {
     super(props);
   }
 
-  clickTest = () => {
+  cellChange = (e) => {
     const {
       toggle,
       id,
       alive
     } = this.props;
-    toggle(id, !alive)
+    e.persist();
+    console.log(e.buttons, e.type)
+    if (e.buttons == 1 || e.buttons == 3 || e.type === 'click') {
+      toggle(id, !alive);
+    }
   }
 
   render(){
@@ -23,8 +27,9 @@ class Cell extends Component {
   	return (
       <div 
       className={`item ${alive ? 'item--alive' : ''}`}
-      onClick={this.clickTest}
-      >{this.props.id}
+      onClick={this.cellChange}
+      onMouseEnter={this.cellChange}
+      >
       </div>
   	)
   }
