@@ -17,7 +17,6 @@ const findByTestAttr = (wrapper, val) => {
 }
 
 const setup = (state={columns:5, rows: 5}) => {
-	console.log(state)
 	const store = storeFactory({})
 	let shallowWrap = shallow(<GameOfLife  store={store}/>).dive()
 	shallowWrap.setState(state);

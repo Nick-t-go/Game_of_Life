@@ -70,9 +70,9 @@ export class GameOfLife extends Component {
     this.props.initGrid(initialCellsGrid);
   }
 
-  createCells = () => {
+  createCells = (wrap=false) => {
     const {rows, columns } = this.state;
-    const { wrap } = this.props.game
+    console.log(wrap)
     let cells = {}
     let sequence = {}
     for (let y = 0; y < rows; y++) {
@@ -187,7 +187,9 @@ export class GameOfLife extends Component {
 
   wrapToggle = (event) => {
     this.props.toggleWrap(event.target.checked)
-    this.createCells();
+    const { cells } = this.createCells(event.target.checked);
+    let cellsGrid = {set:true, grid: cells}
+    this.props.initGrid(cellsGrid);
   }
 
   render(){
@@ -196,31 +198,31 @@ export class GameOfLife extends Component {
       <div data-test="component-game">
         {game.sequences[0] && this.createTable()}
         <div className="control">
-          { game.started ?
-            <button
-            onClick={this.pause}
-            className="controls"
-            >{game.pause ? 'Resume' : 'Pause'}
-            </button> :
-            <button
-            onClick={this.start}
-            className="controls"
-            >Start
-            </button> 
-          }
+          <button
+          onClick={this.start}
+          className="controls"
+          disabled={game.started}
+          >Start
+          </button> 
+          <button
+          disabled={!game.started}
+          onClick={this.pause}
+          className="controls"
+          >{game.pause ? 'Resume' : 'Pause'}
+          </button> 
           <small>Wrap</small>
           <label 
           className="switch"
           > 
-            <input 
-            type="checkbox"
-            disabled={game.started}
-            
-            onChange={this.wrapToggle}
-            />
-            <span
-            className="slider round"
-            ></span>
+          <input 
+          type="checkbox"
+          disabled={game.started}
+          checked={game.wrap}
+          onChange={this.wrapToggle}
+          />
+          <span
+          className="slider round"
+          ></span>
           </label>
 
           <button
