@@ -1,44 +1,42 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Cell from './cell';
-import { 
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import Cell from "./cell";
+import Controls from "./controls";
+import {
   initializeGrid,
   initializeSequence,
-  addNextSequence,
-  changeCurrentSequence,
   toggleGamePause,
   setStartGame,
   resetGameGrid,
-  toggleGameWrap,
-} from './actions/';
+  toggleGameWrap
+} from "./actions/";
 
-// Any live cell with 
+// Any live cell with
 //    fewer than two live neighbours dies, as if by underpopulation.
 //    two or three live neighbours lives on to the next generation.
 //    more than three live neighbours dies, as if by overpopulation.
-// Any dead cell with 
+// Any dead cell with
 //    exactly three live neighbours becomes a live cell, as if by reproduction.
 
 export class GameOfLife extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rows:  15,
-      columns: 15,
+      intervalOn: false,
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.initialize();
     this.stepper;
-    //registerGrid(this.state.columns, this.state.rows)
+  }
+
+  toggleInterval = () =>{
+    this.setState({ intervalOn: !this.state.intervalOn})
   }
 
   collectNeighbors = (x, y, wrap) => {
-    const {
-      columns,
-      rows
-    } = this.state;
+    const { columns, rows } = this.props.game;
     let neighbors = [];
     for (let i = x - 1; i <= x + 1; i++) {
       for (let j = y - 1; j <= y + 1; j++) {
@@ -46,261 +44,114 @@ export class GameOfLife extends Component {
           if (wrap) {
             let checkedX = this.wrapCheck(i, columns);
             let checkedY = this.wrapCheck(j, rows);
-            neighbors.push(checkedX + '-' + checkedY);
+            neighbors.push(checkedX + "-" + checkedY);
           } else {
-            neighbors.push(i + '-' + j);
+            neighbors.push(i + "-" + j);
           }
         }
       }
     }
     return neighbors;
-  }
+  };
 
   wrapCheck = (val, limit) => {
-    if(val === -1) {
-      return limit -1
-    } else if(val === limit) {
-      return 0
-    } else{
-      return val
+    if (val === -1) {
+      return limit - 1;
+    } else if (val === limit) {
+      return 0;
+    } else {
+      return val;
     }
-  }
+  };
 
   initialize = () => {
     const { cells, sequence } = this.createCells();
-    let initialCellsGrid = {set:true, grid: cells}
+    let initialCellsGrid = { set: true, grid: cells };
     this.props.initSequence(sequence);
     this.props.initGrid(initialCellsGrid);
-  }
+  };
 
-  createCells = (wrap=false) => {
-    const {rows, columns } = this.state;
-    let cells = {}
-    let sequence = {}
+  createCells = (wrap = false) => {
+    const { rows, columns } = this.props.game;
+    let cells = {};
+    let sequence = {};
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < columns; x++) {
-        let key = x+'-'+y
+        let key = x + "-" + y;
         cells[key] = {
-          neighbors: this.collectNeighbors(x,y, wrap),
+          neighbors: this.collectNeighbors(x, y, wrap)
         };
-        sequence[key] = false
+        sequence[key] = false;
       }
     }
-    return {cells, sequence}
-  }
+    return { cells, sequence };
+  };
 
   createTable = () => {
-      const {
-        cells,
-        game
-      } = this.props;
-      const {
-        rows,
-        columns
-      } = this.state;
-      let table = []
-      // Outer loop to create parent
-      for (let y = 0; y < rows; y++) {
-        let children = []
-        //Inner loop to create children
-        for (let x = 0; x < columns; x++) {
-          let key = x + '-' + y;
-          children.push(
-          <Cell 
-          x={x}
-          y={y}
-          total={rows * columns}
-          id={key}
-          key={key} 
-          alive={game.sequences[game.current][key]}
+    const { cells, game } = this.props;
+    const { rows, columns } = game;
+    let table = [];
+    // Outer loop to create parent
+    for (let y = 0; y < rows; y++) {
+      let children = [];
+      //Inner loop to create children
+      for (let x = 0; x < columns; x++) {
+        let key = x + "-" + y;
+        children.push(
+          <Cell
+            id={key}
+            key={key}
+            intervalOn={this.state.intervalOn}
+            alive={game.sequences[game.current][key]}
+            pause={game.pause}
           />
-        )
+        );
       }
       //Create the parent and add the children
-      table.push(<div className="row" key={y}>{children}</div>)
-    }
-    return table
-  }
-
-  start = () => {
-    this.props.startGame();
-    this.tick();
-    this.setStepper();
-  }
-
-  tick = () => {
-    const {
-      game,
-      cells,
-    } = this.props;
-    const {
-      sequences,
-      current,
-    } = game;
-    let nextIdx = game.current + 1;
-    if (!game.started) this.props.startGame();
-    if (!sequences[nextIdx]) {
-      let nextSequence = this.getNextSequence(sequences[current]);
-      this.props.addSequence(nextSequence);
-    }
-    this.props.changeSequence(nextIdx);
-  }
-
-  setStepper = () => {
-    this.stepper = window.setInterval(() => {
-      if (!this.props.game.pause) {
-        this.tick();
-      }
-    }, 500)
-  }
-
-
-  getNextSequence(currentSequence) {
-    return Object.entries(currentSequence).reduce((acc, [id, value]) => {
-      acc[id] = this.getNextState(id, value);
-      return acc;
-    }, {})
-  }
-
-  getNextState = (id, alive) => {
-    const {
-      game,
-      cells
-    } = this.props
-    const sequnece = game.sequences[game.current];
-    let neighbors = cells.grid[id].neighbors;
-    let aliveNeighbors = neighbors.filter(neighborID => sequnece[neighborID])
-    if (!alive) {
-      if (aliveNeighbors.length === 3) return true;
-      return false
-    }
-    if (aliveNeighbors.length <= 1) {
-      return false;
-    } else if (aliveNeighbors.length <= 3) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  pause = () => {
-    const pause = !this.props.game.pause
-    this.props.togglePause(pause)
-  }
-
-  reset = () => {
-    this.initialize();
-    this.props.resetGame();
-    clearInterval(this.stepper);
-  }
-
-  decrement = () => {
-    this.props.changeSequence(this.props.game.current - 1)
-  }
-
-  increment = () => {
-    this.props.changeSequence(this.props.game.current + 1)
-  }
-
-  wrapToggle = (event) => {
-    this.props.toggleWrap(event.target.checked)
-    const {
-      cells
-    } = this.createCells(event.target.checked);
-    let cellsGrid = {
-      set: true,
-      grid: cells
-    }
-    this.props.initGrid(cellsGrid);
-  }
-
-  render(){
-    const { game } = this.props
-  	return (
-      <div data-test="component-game">
-        {game.sequences[0] && this.createTable()}
-        <div className="control">
-          <button
-          onClick={this.tick}
-          className="controls"
-          >Tick
-          </button> 
-          <button
-          onClick={this.start}
-          className="controls"
-          disabled={game.started && this.stepper}
-          >Start
-          </button> 
-          <button
-          disabled={!game.started || !this.stepper}
-          onClick={this.pause}
-          className="controls"
-          >{game.pause ? 'Resume' : 'Pause'}
-          </button> 
-          <div>
-            Wrap
-            <label 
-            className="switch"
-            > 
-            <input 
-            type="checkbox"
-            disabled={game.started}
-            checked={game.wrap}
-            onChange={this.wrapToggle}
-            />
-            <span
-            className="slider round"
-            ></span>
-            </label>
-          </div>
-          <button
-          onClick={this.reset}
-          className="controls"
-          >Reset
-          </button>
-          <div
-          className="controls"
-          >{`Sequence: ${this.props.game.current}`}</div>
-           <button
-            onClick={this.decrement}
-            className="controls"
-            disabled={!game.started || game.current === 0}
-            >Step Back
-            </button> 
-           <button
-            onClick={this.increment}
-            className="controls"
-            disabled={!game.started || game.sequences.length === game.current+1}
-            >Step Forward
-            </button> 
-
+      table.push(
+        <div className='row' key={y}>
+          {children}
         </div>
+      );
+    }
+    return table;
+  };
+
+  
+
+  render() {
+    const { game } = this.props;
+    return (
+      <div className='gameContainer' data-test='component-game'>
+        <div className='gridContainer'>
+          {game.sequences[0] && this.createTable()}
+        </div>
+        <Controls
+        toggleInterval={this.toggleInterval}
+        intervalOn={this.state.intervalOn}
+        createCells={this.createCells}
+        initialize={this.initialize}/>
+
       </div>
-  	)
+    );
   }
 }
 
-
-function mapStateToProps ({ cells, game }) {
+function mapStateToProps({ cells, game }) {
   return {
     cells,
-    game,
-  }
+    game
+  };
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps(dispatch) {
   return {
-    initGrid: (grid) => dispatch(initializeGrid(grid)),
-    initSequence: (seq) => dispatch(initializeSequence(seq)),
-    addSequence: (seq) => dispatch(addNextSequence(seq)),
-    changeSequence: (val) => dispatch(changeCurrentSequence(val)),
-    togglePause: (val) => dispatch(toggleGamePause(val)),
-    startGame: () => dispatch(setStartGame()),
-    resetGame: () => dispatch(resetGameGrid()),
-    toggleWrap: (val) => dispatch(toggleGameWrap(val)),
-  }
+    initGrid: grid => dispatch(initializeGrid(grid)),
+    initSequence: seq => dispatch(initializeSequence(seq))
+  };
 }
-    
-export default connect(mapStateToProps,
+
+export default connect(
+  mapStateToProps,
   mapDispatchToProps
-)(GameOfLife)
+)(GameOfLife);

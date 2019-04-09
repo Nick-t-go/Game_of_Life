@@ -4,6 +4,6 @@ import game from './gameReducer';
 
 
 export default combineReducers({
-	cells,
-	game
-})
+  cells,
+  game,
+});

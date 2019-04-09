@@ -21,24 +21,24 @@ class Cell extends Component {
     }
   }
 
+  autoPlay = () => {
+    const {intervalOn, alive, pause} = this.props;
+    return intervalOn && alive && !pause
+  }
+
   render(){
-    const {alive } = this.props;
+    const {alive, intervalOn } = this.props;
   	return (
       <div 
-      className={`item ${alive ? 'item--alive' : ''}`}
+      className={
+        `item ${alive ? 'item--alive' : ''} 
+        ${ this.autoPlay() ? 'autoplay' : ''}`
+      }
       onClick={this.cellChange}
       onMouseEnter={this.cellChange}
       >
       </div>
   	)
-  }
-}
-
-
-function mapStateToProps ({ cell, game }) {
-  return {
-    cell,
-    game,
   }
 }
 
@@ -48,6 +48,6 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps,
+export default connect(null,
   mapDispatchToProps
 )(Cell)

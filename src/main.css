@@ -5,12 +5,27 @@ body {
 }
 
 .container {
+  display: flex;
+  flex-direction: column;
   text-align: center;
+}
+
+.gameContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.gridContainer{
+  margin: 0 5% .25em;
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
 }
 
 h1 {
   background-color: #222;
-  padding: 40px;
+  padding: 20px;
   color: white;
 }
 
@@ -21,19 +36,34 @@ h1 {
 }
 
 .row {
-  height: 30px;
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 .item {
   font-size: 10px;
   display: inline-block;
   border: 1px solid black;
-  height: 30px;
-  width: 30px;
+  flex-grow: 1;
+
+}
+
+@keyframes alivecolor {
+  0%   {background-color: #224028;}
+  25%  {background-color: #67BF79;}
+  50%  {background-color: #458051;}
+  100% {background-color: #224028;}
 }
 
 .item--alive {
   background-color: black;
+}
+
+.autoplay {
+  animation-name: alivecolor;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
 }
 .control {
   margin: 10px;
@@ -60,6 +90,7 @@ h1 {
 }
 
 .slider {
+  margin-left: 5px;
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -115,7 +146,7 @@ button {
 
 button:disabled,
 button[disabled]{
-  border: 1px solid #999999;
+  border: .5px solid #999999;
   background-color: #cccccc;
   color: #666666;
 }
