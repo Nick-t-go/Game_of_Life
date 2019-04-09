@@ -11,8 +11,8 @@ export default (state = {
   started: false,
   pause: false,
   wrap: false,
-  columns: 20,
-  rows: 20,
+  columns: 50,
+  rows: 50,
 }, action) => produce(state, (draft) => {
   switch (action.type) {
     case actionTypes.INITIALIZE_SEQUENCE:
