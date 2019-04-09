@@ -131,7 +131,6 @@ export class GameOfLife extends Component {
         intervalOn={this.state.intervalOn}
         createCells={this.createCells}
         initialize={this.initialize}/>
-
       </div>
     );
   }

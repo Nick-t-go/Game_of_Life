@@ -16,10 +16,18 @@ const findByTestAttr = (wrapper, val) => {
 	return wrapper.find(`[data-test="${val}"]`)
 }
 
-const setup = (state={columns:5, rows: 5}) => {
-	const store = storeFactory({});
+const setup = (game = {
+    active: false,
+    current: 0,
+    sequences: [],
+    started: false,
+    pause: false,
+    wrap: true,
+    columns: 5,
+    rows: 5,
+  }) => {
+  const store = storeFactory({game});
 	let shallowWrap = shallow(<GameOfLife store={store}/>).dive()
-	shallowWrap.setState(state);
 	return shallowWrap;
 }
 
@@ -49,8 +57,18 @@ describe('check component instance methods', () => {
   });
   describe('createCells', () => {
   	test('returns correct sequence', () => {
-  		const wrapper = setup({columns:2,rows:2});
-  	    const game = wrapper.instance();
+  		const wrapper = setup(
+        {
+        active: false,
+        current: 0,
+        sequences: [],
+        started: false,
+        pause: false,
+        wrap: true,
+        columns: 2,
+        rows: 2,
+      });
+  	  const game = wrapper.instance();
   		const { sequence } = game.createCells();
   		const correctSequence = {
   		  '0-0': false,
@@ -61,7 +79,17 @@ describe('check component instance methods', () => {
   		expect(sequence).toEqual(correctSequence)
   	});
   	test('returns correct number of cells', () => {
-  		const wrapper = setup({columns:10, rows:10});
+  		const wrapper = setup(
+      {
+        active: false,
+        current: 0,
+        sequences: [],
+        started: false,
+        pause: false,
+        wrap: true,
+        columns: 10,
+        rows: 10,
+      });
   	    const game = wrapper.instance();
   		const { cells } = game.createCells();
   		expect(Object.keys(cells).length).toBe(100)
