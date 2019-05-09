@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './main.css';
 import GameOfLife from './gameOfLife'
 
-import { TOAD } from "./patterns";
-
 class App extends Component {
   render() {
     return (

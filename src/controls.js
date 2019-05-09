@@ -54,31 +54,6 @@ export class Controls extends Component {
     this.props.toggleInterval();
   };
 
-  // getNextSequence(currentSequence) {
-  //   return Object.entries(currentSequence).reduce((acc, [id, value]) => {
-  //     acc[id] = this.getNextState(id, value);
-  //     return acc;
-  //   }, {});
-  // }
-
-  // getNextState = (id, alive) => {
-  //   const { game, cells } = this.props;
-  //   const sequnece = game.sequences[game.current];
-  //   let neighbors = cells.grid[id].neighbors;
-  //   let aliveNeighbors = neighbors.filter(neighborID => sequnece[neighborID]);
-  //   if (!alive) {
-  //     if (aliveNeighbors.length === 3) return true;
-  //     return false;
-  //   }
-  //   if (aliveNeighbors.length <= 1) {
-  //     return false;
-  //   } else if (aliveNeighbors.length <= 3) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
-
   pause = () => {
     const pause = !this.props.game.pause;
     this.props.togglePause(pause);
@@ -152,7 +127,6 @@ export class Controls extends Component {
           min='0'
           max={game.sequences.length - 1}
           value={game.current}
-          className='slider'
           onChange={this.seqChange}
           />
         </div>
