@@ -29,8 +29,8 @@ export const toggleCell = (cell, value) => ({
   type: actionTypes.TOGGLE_CELL,
 });
 
-export const addNextSequence = sequence => ({
-  sequence,
+export const addNextSequence = cells => ({
+  cells,
   type: actionTypes.ADD_SEQUENCE,
 });
 

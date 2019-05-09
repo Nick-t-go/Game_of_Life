@@ -4,6 +4,28 @@ import {
   actionTypes,
 } from '../actions';
 
+// Object.entries(currentSequence).reduce((acc, [id, value]) => {
+//       acc[id] = this.getNextState(id, value);
+//       return acc;
+//     }, {});
+
+const getNextGameState = (cells, sequence, id, alive) => {
+  console.log(cells, sequence, id, alive)
+    let neighbors = cells.grid[id].neighbors;
+    let aliveNeighbors = neighbors.filter(neighborID => sequence[neighborID]);
+    if (!alive) {
+      if (aliveNeighbors.length === 3) return true;
+      return false;
+    }
+    if (aliveNeighbors.length <= 1) {
+      return false;
+    } else if (aliveNeighbors.length <= 3) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
 export default (state = {
   active: false,
   current: 0,
@@ -23,7 +45,11 @@ export default (state = {
       draft.sequences[draft.current][action.cell] = action.value;
       return;
     case actionTypes.ADD_SEQUENCE:
-      draft.sequences.push(action.sequence);
+      const newSequence = Object.entries(draft.sequences[draft.current]).reduce(( acc, [id, value]) => {
+         acc[id] = getNextGameState(action.cells, draft.sequences[draft.current], id, value);
+         return acc;
+      },{});
+      draft.sequences.push(newSequence);
       return;
     case actionTypes.CHANGE_SEQUENCE:
       draft.current = action.value;
@@ -45,3 +71,4 @@ export default (state = {
       return
   }
 });
+

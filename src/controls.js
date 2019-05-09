@@ -25,8 +25,8 @@ export class Controls extends Component {
     let nextIdx = game.current + 1;
     if (!game.started) this.props.startGame();
     if (!sequences[nextIdx]) {
-      let nextSequence = this.getNextSequence(sequences[current]);
-      this.props.addSequence(nextSequence);
+      // let nextSequence = this.getNextSequence(sequences[current]);
+      this.props.addSequence(cells);
     }
     this.props.changeSequence(nextIdx);
   };
@@ -54,30 +54,30 @@ export class Controls extends Component {
     this.props.toggleInterval();
   };
 
-  getNextSequence(currentSequence) {
-    return Object.entries(currentSequence).reduce((acc, [id, value]) => {
-      acc[id] = this.getNextState(id, value);
-      return acc;
-    }, {});
-  }
+  // getNextSequence(currentSequence) {
+  //   return Object.entries(currentSequence).reduce((acc, [id, value]) => {
+  //     acc[id] = this.getNextState(id, value);
+  //     return acc;
+  //   }, {});
+  // }
 
-  getNextState = (id, alive) => {
-    const { game, cells } = this.props;
-    const sequnece = game.sequences[game.current];
-    let neighbors = cells.grid[id].neighbors;
-    let aliveNeighbors = neighbors.filter(neighborID => sequnece[neighborID]);
-    if (!alive) {
-      if (aliveNeighbors.length === 3) return true;
-      return false;
-    }
-    if (aliveNeighbors.length <= 1) {
-      return false;
-    } else if (aliveNeighbors.length <= 3) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // getNextState = (id, alive) => {
+  //   const { game, cells } = this.props;
+  //   const sequnece = game.sequences[game.current];
+  //   let neighbors = cells.grid[id].neighbors;
+  //   let aliveNeighbors = neighbors.filter(neighborID => sequnece[neighborID]);
+  //   if (!alive) {
+  //     if (aliveNeighbors.length === 3) return true;
+  //     return false;
+  //   }
+  //   if (aliveNeighbors.length <= 1) {
+  //     return false;
+  //   } else if (aliveNeighbors.length <= 3) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
 
   pause = () => {
     const pause = !this.props.game.pause;
@@ -101,6 +101,10 @@ export class Controls extends Component {
     };
     this.props.initGrid(cellsGrid);
   };
+
+  seqChange = event => {
+    this.props.changeSequence(event.target.value)
+  }
 
   render() {
     const { game } = this.props;
@@ -142,6 +146,16 @@ export class Controls extends Component {
           </label>
         </div>
         <div className='controls'>{`Sequence: ${this.props.game.current}`}</div>
+        <div className="slidecontainer">
+          <input
+          type='range'
+          min='0'
+          max={game.sequences.length - 1}
+          value={game.current}
+          className='slider'
+          onChange={this.seqChange}
+          />
+        </div>
         <button
           onClick={this.decrement}
           className='controls'
@@ -171,7 +185,7 @@ function mapStateToProps({ cells, game }) {
 function mapDispatchToProps(dispatch) {
   return {
     changeSequence: val => dispatch(changeCurrentSequence(val)),
-    addSequence: seq => dispatch(addNextSequence(seq)),
+    addSequence: cells => dispatch(addNextSequence(cells)),
     togglePause: val => dispatch(toggleGamePause(val)),
     startGame: () => dispatch(setStartGame()),
     resetGame: () => dispatch(resetGameGrid()),
