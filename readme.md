@@ -5,6 +5,10 @@ This is
 [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 using React.
 
+![pulsar](https://upload.wikimedia.org/wikipedia/commons/0/07/Game_of_life_pulsar.gif)
+![breeder](https://upload.wikimedia.org/wikipedia/commons/e/e6/Conways_game_of_life_breeder_animation.gif)
+![i-column](https://upload.wikimedia.org/wikipedia/commons/f/fb/I-Column.gif)
+
 # To do
 - Redo Tests
 - Fix placement of slider that allows the user to time-travel and scrub through any
