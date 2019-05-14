@@ -9,6 +9,19 @@ import {
   toggleGameWrap,
   initializeGrid,
  } from "./actions/";
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import PlayArrow from '@material-ui/icons/PlayArrow';
+import Power from '@material-ui/icons/Power';
+import SkipNext from '@material-ui/icons/SkipNext';
+import Pause from '@material-ui/icons/Pause';
+import Replay from '@material-ui/icons/Replay';
+import Switch from '@material-ui/core/Switch';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIos from '@material-ui/icons/ArrowForwardIos';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Chip from '@material-ui/core/Chip';
+import IconButton from '@material-ui/core/IconButton';
 
 export class Controls extends Component {
   constructor(props) {
@@ -86,42 +99,71 @@ export class Controls extends Component {
 
     return (
       <div className='control'>
-        <button 
-          onClick={this.tick} 
-          className='controls'>
-          Tick
-        </button>
-        <button
+        <Button
           onClick={this.start}
+          size="small" 
+          variant="contained"
+          color="primary"
+          disabled={game.started && this.props.intervalOn}
           className='controls'
-          disabled={game.started && this.props.intervalOn}>
+          >
           Start
-        </button>
-        <button
-          disabled={!game.started || !this.props.intervalOn}
-          onClick={this.pause}
-          className='controls'>
+          <Power>start</Power>
+        </Button>
+        <Button
+          onClick={this.tick} 
+          variant="contained"
+          color="primary"
+          className='controls'
+          size="small"
+          >
+          Tick
+          <SkipNext>start</SkipNext>
+        </Button>
+        <Button
+          onClick={this.pause} 
+          variant="contained"
+          color="primary"
+          className='controls'
+          size="small"
+          >
           {game.pause ? "Resume" : "Pause"}
-        </button>
-        <button 
-          onClick={this.reset}
-          className='controls'>
+          {game.pause ? <PlayArrow>Plau</PlayArrow> : <Pause>Pause</Pause> }
+        </Button>
+        <Button
+          onClick={this.reset} 
+          variant="contained"
+          color="primary"
+          className='controls'
+          size="small"
+          >
           Reset
-        </button>
-        <div>
-          Wrap
-          <label className='switch'>
-            <input
-              type='checkbox'
+          <Replay>Reset</Replay>
+        </Button>
+        <FormControlLabel
+          control={
+            <Switch
               disabled={game.started}
               checked={game.wrap}
               onChange={this.wrapToggle}
+              color="primary"
             />
-            <span className='slider round' />
-          </label>
-        </div>
-        <div className='controls'>{`Sequence: ${this.props.game.current}`}</div>
-        <div className="slidecontainer">
+          }
+          label="Wrap"
+        />
+       
+        <IconButton
+        className='controls'
+        aria-label="Decrement" 
+        onClick={this.decrement}
+        disabled={!game.started || game.current === 0}
+        >
+          <ArrowBackIos fontSize="small" />
+        </IconButton>
+        <div className="controls slidecontainer">
+          <Chip 
+         label={`Sequence: ${this.props.game.current}`}
+         color='primary' />
           <input
           type='range'
           min='0'
@@ -130,20 +172,14 @@ export class Controls extends Component {
           onChange={this.seqChange}
           />
         </div>
-        <button
-          onClick={this.decrement}
-          className='controls'
-          disabled={!game.started || game.current === 0}>
-          Step Back
-        </button>
-        <button
-          onClick={this.increment}
-          className='controls'
-          disabled={
-            !game.started || game.sequences.length === game.current + 1
-          }>
-          Step Forward
-        </button>
+        <IconButton
+        className='controls'
+        aria-label="Decrement" 
+        onClick={this.increment}
+        disabled={!game.started || game.sequences.length === game.current + 1}
+        >
+          <ArrowForwardIos fontSize="small" />
+        </IconButton>     
       </div>
     );
   }

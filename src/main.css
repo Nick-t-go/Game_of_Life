@@ -72,8 +72,16 @@ h1 {
   justify-content: center;
 }
 
+.control > button {
+  margin: 5px;
+}
+.slidecontainer {
+  display: flex;
+  flex-direction: column;
+}
+
 .controls {
-  margin: 0 10px;
+  margin: 5px;
 }
 
 .switch {
